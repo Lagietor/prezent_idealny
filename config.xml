@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>wishdeliveryselection</name>
+	<displayName><![CDATA[Wish Delivery Selection]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Gives a possibility to choose in which way the wishes should be delivered]]></description>
+	<author><![CDATA[Pablo&Wiktor]]></author>
+	<tab><![CDATA[emailing]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>
