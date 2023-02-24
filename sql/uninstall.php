@@ -1,4 +1,5 @@
 <?php
+
 /**
 * 2007-2023 PrestaShop
 *
@@ -29,6 +30,7 @@
  * Maybe the merchant will just try to reset the module
  * but does not want to loose all of the data associated to the module.
  */
+
 $sql = array();
 
 foreach ($sql as $query) {
