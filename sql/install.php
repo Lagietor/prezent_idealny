@@ -27,10 +27,13 @@
 
 $sql = array();
 
-$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection` (
-    `id_wishdeliveryselection` int(11) NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY  (`id_wishdeliveryselection`)
-) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_product_options` (
+    `id` int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    `id_product` int UNIQUE NOT NULL,
+    `registered_email` boolean NOT NULL DEFAULT 1,
+    `other_email` boolean NOT NULL DEFAULT 1,
+    `sms` boolean NOT NULL DEFAULT 1
+) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
 
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {

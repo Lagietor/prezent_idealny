@@ -29,9 +29,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require __DIR__ . '/classes/DbProductOptionsManagement.php';
+
 class Wishdeliveryselection extends Module
 {
     protected $config_form = false;
+    public $test;
 
     public function __construct()
     {
@@ -55,7 +58,10 @@ class Wishdeliveryselection extends Module
     {
         include(dirname(__FILE__) . '/sql/install.php');
 
-        return parent::install();
+        return parent::install() &&
+            $this->registerHook('displayAdminProductsExtra') &&
+            $this->registerHook('actionProductSave') &&
+            $this->registerHook('displayBackOfficeHeader');
     }
 
     public function uninstall()
@@ -67,8 +73,26 @@ class Wishdeliveryselection extends Module
 
     public function getContent()
     {
-        if (((bool)Tools::isSubmit('submitWishdeliveryselectionModule')) == true) {
-            // nie wiem czy będziemy robić jakiś stronę konfiguracyjną ale póki co to zostawię
+        if (((bool)Tools::isSubmit('#')) == true) {
+            // nie wiem czy będziemy robić jakąś stronę konfiguracyjną ale póki co to zostawię
         }
+    }
+
+    public function hookDisplayAdminProductsExtra($params)
+    {
+        $this->context->smarty->assign('test', $this->test);
+        return $this->display(__FILE__, '/views/templates/admin/productwishselection.tpl');
+    }
+
+    public function hookActionProductSave($params)
+    {
+        die;
+        exit;
+        $this->test = "abcd";
+    }
+
+    public function hookDisplayBackOfficeHeader()
+    {
+        echo $this->test;
     }
 }
