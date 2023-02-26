@@ -60,7 +60,7 @@ class Wishdeliveryselection extends Module
 
         return parent::install() &&
             $this->registerHook('displayAdminProductsExtra') &&
-            $this->registerHook('actionProductSave') &&
+            $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('displayBackOfficeHeader');
     }
 
@@ -71,10 +71,15 @@ class Wishdeliveryselection extends Module
         return parent::uninstall();
     }
 
-    public function getContent()
+    public function run()
     {
-        if (((bool)Tools::isSubmit('#')) == true) {
-            // nie wiem czy będziemy robić jakąś stronę konfiguracyjną ale póki co to zostawię
+        if (!$_COOKIE["TestCock"]) {
+            echo "brak cookie";
+        } else {
+            echo $_COOKIE["TestCock"];
+            $db = new DbProductOptionsManagement($_COOKIE["TestCock"]);
+            $db->setOptions(true, true, true);
+            setcookie("TestCock", "", time() - 3600);
         }
     }
 
@@ -82,17 +87,23 @@ class Wishdeliveryselection extends Module
     {
         $this->context->smarty->assign('test', $this->test);
         return $this->display(__FILE__, '/views/templates/admin/productwishselection.tpl');
+        setcookie("TestCock2", $this->context->smarty->get_template_vars('foo'), time() + 3600);
     }
 
-    public function hookActionProductSave($params)
+    public function hookActionObjectProductUpdateAfter($params)
     {
-        die;
-        exit;
-        $this->test = "abcd";
+        setcookie("TestCock", $params['object']->id, time() + 3600);
+        $myfile = fopen(_PS_ROOT_DIR_ . '\log.txt', 'a');
+        // foreach() {
+        //     fwrite($myfile, "test");
+        //     fwrite($myfile, "\n");
+        // }
+        fclose($myfile);
     }
 
-    public function hookDisplayBackOfficeHeader()
+    public function hookDisplayBackOfficeHeader($params)
     {
-        echo $this->test;
+        $this->run();
+        dump($_COOKIE["TestCock2"]);
     }
 }

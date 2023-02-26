@@ -30,6 +30,8 @@ class DbProductOptionsManagement
             `id_product`, `registered_email`, `other_email`, `sms`) VALUES (
             ' . $this->id_product . ', ' . $registeredEmail . ', ' . $otherEmail . ', ' . $sms . ')';
 
+        // dump($this->id_product);
+
         Db::getInstance()->executeS($query);
     }
 }
