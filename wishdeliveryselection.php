@@ -61,6 +61,7 @@ class Wishdeliveryselection extends Module
         return parent::install() &&
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionObjectProductUpdateAfter') &&
+            $this->registerHook('displayBeforeCarrier') &&
             $this->registerHook('displayBackOfficeHeader');
     }
 
@@ -73,37 +74,57 @@ class Wishdeliveryselection extends Module
 
     public function run()
     {
-        if (!$_COOKIE["TestCock"]) {
-            echo "brak cookie";
-        } else {
-            echo $_COOKIE["TestCock"];
-            $db = new DbProductOptionsManagement($_COOKIE["TestCock"]);
-            $db->setOptions(true, true, true);
-            setcookie("TestCock", "", time() - 3600);
-        }
+        $db = new DbProductOptionsManagement($_COOKIE["id_product"]);
+        $db->setOptions((bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
+
+        setcookie('id_product', "", time() - 3600);
+        setcookie('sms', "", time() - 3600);
+        setcookie('registered_email', "", time() - 3600);
+        setcookie('other_email', "", time() - 3600);
     }
 
-    public function hookDisplayAdminProductsExtra($params)
+    public function hookActionAdminControllerSetMedia($params)
     {
-        $this->context->smarty->assign('test', $this->test);
+        file_put_contents(_PS_ROOT_DIR_ . '\log.txt', print_r($params, true));
+    }
+
+    public function hookDisplayAdminProductsExtra()
+    {
+        if ($_COOKIE['id_product']) {
+            $this->run();
+        }
+
+        // fuck it shit happens, this is the moment when he knew... he fucked up
+        global $kernel;
+        $requestStack = $kernel->getContainer()->get('request_stack');
+        $request = $requestStack->getCurrentRequest();
+        $idProduct = $request->get('id');
+
+        $this->context->smarty->assign('test', $idProduct);
         return $this->display(__FILE__, '/views/templates/admin/productwishselection.tpl');
-        setcookie("TestCock2", $this->context->smarty->get_template_vars('foo'), time() + 3600);
     }
 
     public function hookActionObjectProductUpdateAfter($params)
     {
-        setcookie("TestCock", $params['object']->id, time() + 3600);
-        $myfile = fopen(_PS_ROOT_DIR_ . '\log.txt', 'a');
-        // foreach() {
-        //     fwrite($myfile, "test");
-        //     fwrite($myfile, "\n");
-        // }
-        fclose($myfile);
+        setcookie('id_product', $params['object']->id, time() + 3600);
+
+        setcookie('registered_email', Tools::getValue('registered_email', 0), time() + 3600);
+        setcookie('other_email', Tools::getValue('other_email', 0), time() + 3600);
+        setcookie('sms', Tools::getValue('sms', 0), time() + 3600);
     }
 
     public function hookDisplayBackOfficeHeader($params)
     {
-        $this->run();
-        dump($_COOKIE["TestCock2"]);
+        global $kernel;
+        $requestStack = $kernel->getContainer()->get('request_stack');
+        $request = $requestStack->getCurrentRequest();
+        $idProduct = $request->get('id');
+
+        // dump($idProduct);
+    }
+
+    public function hookDisplayBeforeCarrier($params)
+    {
+        return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
     }
 }

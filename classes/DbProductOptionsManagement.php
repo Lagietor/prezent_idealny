@@ -28,9 +28,7 @@ class DbProductOptionsManagement
     {
         $query = 'REPLACE INTO `' . _DB_PREFIX_ . 'wishdeliveryselection_product_options`(
             `id_product`, `registered_email`, `other_email`, `sms`) VALUES (
-            ' . $this->id_product . ', ' . $registeredEmail . ', ' . $otherEmail . ', ' . $sms . ')';
-
-        // dump($this->id_product);
+            ' . $this->id_product . ', ' . (int)$registeredEmail . ', ' . (int)$otherEmail . ', ' . (int)$sms . ')';
 
         Db::getInstance()->executeS($query);
     }

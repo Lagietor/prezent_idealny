@@ -14,5 +14,4 @@
 <label name="sms">
     <input type="checkbox" name="sms" value="true"> {l s='SMS' mod='wishdeliveryselection'}
 </label>
-{$test}
 
