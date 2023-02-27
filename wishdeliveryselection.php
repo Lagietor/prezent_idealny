@@ -74,18 +74,13 @@ class Wishdeliveryselection extends Module
 
     public function run()
     {
-        $db = new DbProductOptionsManagement($_COOKIE["id_product"]);
-        $db->setOptions((bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
+        $dbProductOptions = new DbProductOptionsManagement($_COOKIE["id_product"]);
+        $dbProductOptions->setOptions((bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
 
         setcookie('id_product', "", time() - 3600);
         setcookie('sms', "", time() - 3600);
         setcookie('registered_email', "", time() - 3600);
         setcookie('other_email', "", time() - 3600);
-    }
-
-    public function hookActionAdminControllerSetMedia($params)
-    {
-        file_put_contents(_PS_ROOT_DIR_ . '\log.txt', print_r($params, true));
     }
 
     public function hookDisplayAdminProductsExtra()
@@ -100,6 +95,11 @@ class Wishdeliveryselection extends Module
         $request = $requestStack->getCurrentRequest();
         $idProduct = $request->get('id');
 
+        $dbProductOptions = new DbProductOptionsManagement($idProduct);
+        $productOptions = $dbProductOptions->getOptions();
+
+        $this->context->smarty->assign('productOptions', $productOptions);
+
         $this->context->smarty->assign('test', $idProduct);
         return $this->display(__FILE__, '/views/templates/admin/productwishselection.tpl');
     }
@@ -113,14 +113,17 @@ class Wishdeliveryselection extends Module
         setcookie('sms', Tools::getValue('sms', 0), time() + 3600);
     }
 
-    public function hookDisplayBackOfficeHeader($params)
+    public function hookDisplayBackOfficeHeader()
     {
-        global $kernel;
-        $requestStack = $kernel->getContainer()->get('request_stack');
-        $request = $requestStack->getCurrentRequest();
-        $idProduct = $request->get('id');
+        // global $kernel;
+        // $requestStack = $kernel->getContainer()->get('request_stack');
+        // $request = $requestStack->getCurrentRequest();
+        // $idProduct = $request->get('id');
 
-        // dump($idProduct);
+        // $dbProductOptions = new DbProductOptionsManagement($idProduct);
+        // $productOptions = $dbProductOptions->getOptions();
+
+        // dump($productOptions);
     }
 
     public function hookDisplayBeforeCarrier($params)
