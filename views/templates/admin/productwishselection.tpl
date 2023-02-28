@@ -26,4 +26,6 @@
         {/if}>
     {l s='SMS' mod='wishdeliveryselection'}
 </label>
-
+<br>
+<br>
+<h5> {l s='To apply those options you must click "Save" button and refresh the page' mod='wishdeliveryselection'}

@@ -25,6 +25,8 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use Symfony\Component\Validator\Constraints\Length;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -74,8 +76,8 @@ class Wishdeliveryselection extends Module
 
     public function run()
     {
-        $dbProductOptions = new DbProductOptionsManagement($_COOKIE["id_product"]);
-        $dbProductOptions->setOptions((bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
+        $dbProductOptions = new DbProductOptionsManagement();
+        $dbProductOptions->setOptions($_COOKIE["id_product"], (bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
 
         setcookie('id_product', "", time() - 3600);
         setcookie('sms', "", time() - 3600);
@@ -95,8 +97,8 @@ class Wishdeliveryselection extends Module
         $request = $requestStack->getCurrentRequest();
         $idProduct = $request->get('id');
 
-        $dbProductOptions = new DbProductOptionsManagement($idProduct);
-        $productOptions = $dbProductOptions->getOptions();
+        $dbProductOptions = new DbProductOptionsManagement();
+        $productOptions = $dbProductOptions->getProductOptions($idProduct);
 
         $this->context->smarty->assign('productOptions', $productOptions);
 
@@ -128,6 +130,37 @@ class Wishdeliveryselection extends Module
 
     public function hookDisplayBeforeCarrier($params)
     {
+        $cart = new Cart($params['cart']->id);
+        $products = $cart->getProducts();
+        $productsIds = [];
+
+        foreach ($products as $p) {
+            $productsIds[] = $p['id_product'];
+        }
+
+        $dbProductOptions = new DbProductOptionsManagement();
+        $productsOptions = $dbProductOptions->getProductsOptions($productsIds);
+
+        if (count($products) > count($productsOptions)) {
+            $diff = count($products) - count($productsOptions);
+
+            for ($i = 0; $i < $diff; $i++) {
+                $productsOptions[] = [
+                    'registered_email' => '1',
+                    'other_email' => '1',
+                    'sms' => '1'
+                ];
+            }
+        }
+
+        if (count($productsOptions) > 1) {
+            $productsOptions = call_user_func_array('array_intersect_assoc', $productsOptions);
+        } else {
+            $productsOptions = $productsOptions[0];
+        }
+
+        $this->context->smarty->assign('options', $productsOptions);
+
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
     }
 }

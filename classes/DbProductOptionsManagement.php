@@ -4,22 +4,12 @@ class DbProductOptionsManagement
 {
     private const TABLE_NAME = 'wishdeliveryselection_product_options';
 
-    /**
-     * @var integer
-     */
-    private $id_product;
-
-    public function __construct(int $id_product = null)
-    {
-        $this->id_product = $id_product;
-    }
-
-    public function getOptions(): array
+    public function getProductOptions(int $idProduct): array
     {
         $query = new DbQuery();
-        $query->select('*')
+        $query->select('registered_email, other_email, sms')
             ->from(self::TABLE_NAME)
-            ->where('id_product = ' . $this->id_product);
+            ->where('id_product = ' . $idProduct);
 
         $result = (Db::getInstance()->getRow($query));
 
@@ -30,11 +20,27 @@ class DbProductOptionsManagement
         return $result;
     }
 
-    public function setOptions(bool $registeredEmail, bool $otherEmail, bool $sms): void
+    public function getProductsOptions(array $idsProducts): array
+    {
+        $conditions = 'id_product = ' . implode(' || id_product = ', $idsProducts);
+        // dump($conditions);
+        // die;
+
+        $query = new DbQuery();
+        $query->select('registered_email, other_email, sms')
+            ->from(self::TABLE_NAME)
+            ->where($conditions);
+
+        $result = Db::getInstance()->executeS($query);
+
+        return $result;
+    }
+
+    public function setOptions(int $idProduct, bool $registeredEmail, bool $otherEmail, bool $sms): void
     {
         $query = 'REPLACE INTO `' . _DB_PREFIX_ . self::TABLE_NAME . '`(
             `id_product`, `registered_email`, `other_email`, `sms`) VALUES (
-            ' . $this->id_product . ', ' . (int)$registeredEmail . ', ' . (int)$otherEmail . ', ' . (int)$sms . ')';
+            ' . $idProduct . ', ' . (int)$registeredEmail . ', ' . (int)$otherEmail . ', ' . (int)$sms . ')';
 
         Db::getInstance()->executeS($query);
     }
