@@ -25,13 +25,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-use Symfony\Component\Validator\Constraints\Length;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 require __DIR__ . '/classes/DbProductOptionsManagement.php';
+require __DIR__ . '/classes/WishForm.php';
+
 
 class Wishdeliveryselection extends Module
 {
@@ -64,6 +64,7 @@ class Wishdeliveryselection extends Module
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('displayBeforeCarrier') &&
+            $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader');
     }
 
@@ -130,37 +131,25 @@ class Wishdeliveryselection extends Module
 
     public function hookDisplayBeforeCarrier($params)
     {
+        $wishForm = new WishForm();
         $cart = new Cart($params['cart']->id);
-        $products = $cart->getProducts();
-        $productsIds = [];
 
-        foreach ($products as $p) {
-            $productsIds[] = $p['id_product'];
-        }
-
+        $productsIds = $wishForm->getInCartProductsIds($cart);
         $dbProductOptions = new DbProductOptionsManagement();
         $productsOptions = $dbProductOptions->getProductsOptions($productsIds);
 
-        if (count($products) > count($productsOptions)) {
-            $diff = count($products) - count($productsOptions);
-
-            for ($i = 0; $i < $diff; $i++) {
-                $productsOptions[] = [
-                    'registered_email' => '1',
-                    'other_email' => '1',
-                    'sms' => '1'
-                ];
-            }
-        }
-
-        if (count($productsOptions) > 1) {
-            $productsOptions = call_user_func_array('array_intersect_assoc', $productsOptions);
-        } else {
-            $productsOptions = $productsOptions[0];
-        }
+        $productsOptions = $wishForm->addProductsWithNoOptions($productsIds, $productsOptions);
+        $productsOptions = $wishForm->getDuplicatedValues($productsOptions);
 
         $this->context->smarty->assign('options', $productsOptions);
 
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
+    }
+
+    public function hookHeader()
+    {   
+        if ($this->context->controller->php_self === 'order') {
+            $this->context->controller->addJS($this->_path . '/views/js/carrierformslider.js');
+        }
     }
 }
