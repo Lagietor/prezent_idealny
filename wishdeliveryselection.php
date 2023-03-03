@@ -147,9 +147,9 @@ class Wishdeliveryselection extends Module
     }
 
     public function hookHeader()
-    {   
+    {
         if ($this->context->controller->php_self === 'order') {
-            $this->context->controller->addJS($this->_path . '/views/js/carrierformslider.js');
+            $this->context->controller->addJS($this->_path . 'views/js/carrierformslider.js');
         }
     }
 }
