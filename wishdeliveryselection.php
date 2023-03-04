@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 
 require __DIR__ . '/classes/DbProductOptionsManagement.php';
 require __DIR__ . '/classes/WishForm.php';
+require __DIR__ . '/classes/WishValidate.php';
 
 
 class Wishdeliveryselection extends Module
@@ -64,8 +65,10 @@ class Wishdeliveryselection extends Module
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('displayBeforeCarrier') &&
-            $this->registerHook('header') &&
-            $this->registerHook('displayBackOfficeHeader');
+            $this->registerHook('actionObjectCartUpdateBefore') &&
+            $this->registerHook('header');
+
+            // actionCarrierProcess
     }
 
     public function uninstall()
@@ -75,7 +78,7 @@ class Wishdeliveryselection extends Module
         return parent::uninstall();
     }
 
-    public function run()
+    public function saveProductOptions()
     {
         $dbProductOptions = new DbProductOptionsManagement();
         $dbProductOptions->setOptions($_COOKIE["id_product"], (bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
@@ -89,7 +92,7 @@ class Wishdeliveryselection extends Module
     public function hookDisplayAdminProductsExtra()
     {
         if ($_COOKIE['id_product']) {
-            $this->run();
+            $this->saveProductOptions();
         }
 
         // fuck it shit happens, this is the moment when he knew... he fucked up
@@ -116,19 +119,6 @@ class Wishdeliveryselection extends Module
         setcookie('sms', Tools::getValue('sms', 0), time() + 3600);
     }
 
-    public function hookDisplayBackOfficeHeader()
-    {
-        // global $kernel;
-        // $requestStack = $kernel->getContainer()->get('request_stack');
-        // $request = $requestStack->getCurrentRequest();
-        // $idProduct = $request->get('id');
-
-        // $dbProductOptions = new DbProductOptionsManagement($idProduct);
-        // $productOptions = $dbProductOptions->getOptions();
-
-        // dump($productOptions);
-    }
-
     public function hookDisplayBeforeCarrier($params)
     {
         $wishForm = new WishForm();
@@ -144,6 +134,45 @@ class Wishdeliveryselection extends Module
         $this->context->smarty->assign('options', $productsOptions);
 
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
+    }
+
+    public function getContent()
+    {
+        if (Tools::isSubmit('confirmDeliveryOption')) {
+            dump('dupa');
+            die;
+        }
+    }
+
+    public function hookActionObjectCartUpdateBefore($params)
+    {
+        // dump(Tools::getAllValues());
+        // die;
+        // dump();
+        // die;
+        // Tools::redirect('index.php');
+
+        if ($this->context->controller->php_self !== 'order') {
+            return;
+        }
+
+        // check other_email validation
+        if (Tools::getValue('wish_form') == "1") {
+            if (!WishValidate::isEmail(Tools::getValue('other_email_address'))) {
+                $this->context->controller->errors[] = $this->l('Incorrect email address');
+            }
+
+            if (Tools::getValue('other_email_datetime') && !WishValidate::isDate(Tools::getValue('other_email_datetime'))) {
+                $this->context->controller->errors[] = $this->l('Delivery date must be set at least one day after today');
+            }
+        }
+
+        // check sms validation
+        if (Tools::getValue('wish_form') == "2") {
+            if (!WishValidate::isPhoneNumber(Tools::getValue('sms_phone_number'))) {
+                $this->context->controller->errors[] = $this->l('Incorrect phone number');
+            }
+        }
     }
 
     public function hookHeader()

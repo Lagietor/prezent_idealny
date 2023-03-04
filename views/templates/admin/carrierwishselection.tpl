@@ -5,7 +5,7 @@
     {* REGISTERED EMAIL *}
     {if isset($options.registered_email) && $options.registered_email == 1}
         <label name="registered_email">
-            <input type="radio" id="registered_email" name="wish_form" checked> 
+            <input type="radio" id="registered_email" name="wish_form" form="js-delivery" value="0" checked> 
             {l s='Send Perfect Gift on my email: ' mod='wishdeliveryselection'}
             {$customer.email}
         </label>
@@ -13,7 +13,7 @@
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
             <textarea class="serp-watched-description form-control" id="registered_email_wishes" name="registered_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" required="required"></textarea>
+            maxlength="400" placeholder="Happy Birthday!" form="js-delivery"></textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -29,7 +29,7 @@
     {* OTHER EMAIL *}
     {if isset($options.other_email) && $options.other_email == 1}
         <label name="other_email">
-            <input type="radio" id="other_email" name="wish_form" 
+            <input type="radio" id="other_email" name="wish_form" form="js-delivery" value="1" 
             {if !isset($options.registered_email) || $options.registered_email != 1}
                 checked
             {/if}> 
@@ -38,18 +38,18 @@
         <div id="other_email_form" style="display: none">
             <span style="color: red">*</span>{l s="Other email: " mod="wishdeliveryselection"}
             <br><br>
-            <input type="text" class="form-control" required="required">
+            <input type="text" class="form-control" form="js-delivery" id="other_email_address" name="other_email_address">
             <br><br>
 
             {l s="Delivery date: " mod="wishdeliveryselection"}
             <br><br>
-            <input type="date" name="other_email_datetime" class="input-group datepicker">
+            <input type="date" name="other_email_datetime" class="input-group datepicker" form="js-delivery">
             <br><br>
 
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
-            <textarea class="serp-watched-description form-control" id="other_email_wishes" name="registered_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" required="required"></textarea>
+            <textarea class="serp-watched-description form-control" id="other_email_wishes" name="other_email_wishes"
+            maxlength="400" placeholder="Happy Birthday!" form="js-delivery"></textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -65,7 +65,7 @@
     {* SMS *}
     {if isset($options.sms) && $options.sms == 1}
         <label name="sms">
-            <input type="radio" id="sms" name="wish_form"
+            <input type="radio" id="sms" name="wish_form" form="js-delivery" value="2"
             {if (!isset($options.registered_email) || $options.registered_email != 1) &&
                 (!isset($options.other_email) || $options.other_email != 1)
             }
@@ -76,7 +76,7 @@
         <div id="sms_form" style="display: none">
             <span style="color: red">*</span> {l s='Phone number :' mod='wishdeliveryselection'}
             <br><br>
-            <input type="text" class="form-control" name="sms_phone_number" required="required"
+            <input type="text" class="form-control" id="sms_phone_number" name="sms_phone_number" form="js-delivery"
             <br>
         </div>
         <br>
