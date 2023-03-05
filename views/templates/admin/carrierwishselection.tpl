@@ -5,7 +5,7 @@
     {* REGISTERED EMAIL *}
     {if isset($options.registered_email) && $options.registered_email == 1}
         <label name="registered_email">
-            <input type="radio" id="registered_email" name="wish_form" form="js-delivery" value="0" checked> 
+            <input type="radio" id="registered_email" name="wish_form" form="js-delivery" value="1" checked> 
             {l s='Send Perfect Gift on my email: ' mod='wishdeliveryselection'}
             {$customer.email}
         </label>
@@ -29,7 +29,7 @@
     {* OTHER EMAIL *}
     {if isset($options.other_email) && $options.other_email == 1}
         <label name="other_email">
-            <input type="radio" id="other_email" name="wish_form" form="js-delivery" value="1" 
+            <input type="radio" id="other_email" name="wish_form" form="js-delivery" value="2" 
             {if !isset($options.registered_email) || $options.registered_email != 1}
                 checked
             {/if}> 
@@ -65,7 +65,7 @@
     {* SMS *}
     {if isset($options.sms) && $options.sms == 1}
         <label name="sms">
-            <input type="radio" id="sms" name="wish_form" form="js-delivery" value="2"
+            <input type="radio" id="sms" name="wish_form" form="js-delivery" value="3"
             {if (!isset($options.registered_email) || $options.registered_email != 1) &&
                 (!isset($options.other_email) || $options.other_email != 1)
             }

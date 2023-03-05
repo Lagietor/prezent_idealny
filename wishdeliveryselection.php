@@ -32,6 +32,7 @@ if (!defined('_PS_VERSION_')) {
 require __DIR__ . '/classes/DbProductOptionsManagement.php';
 require __DIR__ . '/classes/WishForm.php';
 require __DIR__ . '/classes/WishValidate.php';
+require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
 
 
 class Wishdeliveryselection extends Module
@@ -66,9 +67,13 @@ class Wishdeliveryselection extends Module
             $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('displayBeforeCarrier') &&
             $this->registerHook('actionObjectCartUpdateBefore') &&
-            $this->registerHook('header');
+            $this->registerHook('actionObjectOrderAddAfter') &&
+            $this->registerHook('header') &&
+            $this->registerHook('actionValidateOrder');
 
+            // actionValidateStepComplete
             // actionCarrierProcess
+            // actionValidateOrder
     }
 
     public function uninstall()
@@ -95,7 +100,6 @@ class Wishdeliveryselection extends Module
             $this->saveProductOptions();
         }
 
-        // fuck it shit happens, this is the moment when he knew... he fucked up
         global $kernel;
         $requestStack = $kernel->getContainer()->get('request_stack');
         $request = $requestStack->getCurrentRequest();
@@ -136,14 +140,6 @@ class Wishdeliveryselection extends Module
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
     }
 
-    public function getContent()
-    {
-        if (Tools::isSubmit('confirmDeliveryOption')) {
-            dump('dupa');
-            die;
-        }
-    }
-
     public function hookActionObjectCartUpdateBefore($params)
     {
         // dump(Tools::getAllValues());
@@ -156,23 +152,69 @@ class Wishdeliveryselection extends Module
             return;
         }
 
-        // check other_email validation
+        // check registered_email validation (there is no validation right now)
         if (Tools::getValue('wish_form') == "1") {
+            Configuration::updateValue('WISH_MESSAGE', Tools::getValue('registered_email_wishes'));
+        }
+
+        // check other_email validation
+        if (Tools::getValue('wish_form') == "2") {
             if (!WishValidate::isEmail(Tools::getValue('other_email_address'))) {
                 $this->context->controller->errors[] = $this->l('Incorrect email address');
+                // może jakiś return false
             }
 
             if (Tools::getValue('other_email_datetime') && !WishValidate::isDate(Tools::getValue('other_email_datetime'))) {
                 $this->context->controller->errors[] = $this->l('Delivery date must be set at least one day after today');
+                // może jakiś return false
             }
+
+            Configuration::updateValue('EMAIL_ADDRESS', Tools::getValue('other_email_address'));
+            Configuration::updateValue('DELIVERY_DATE', Tools::getValue('other_email_datetime'));
+            Configuration::updateValue('WISH_MESSAGE', Tools::getValue('other_email_wishes'));
         }
 
         // check sms validation
-        if (Tools::getValue('wish_form') == "2") {
+        if (Tools::getValue('wish_form') == "3") {
             if (!WishValidate::isPhoneNumber(Tools::getValue('sms_phone_number'))) {
                 $this->context->controller->errors[] = $this->l('Incorrect phone number');
+                // może jakiś return false
             }
+
+            Configuration::updateValue('PHONE_NUMBER', Tools::getValue('sms_phone_number'));
         }
+    }
+
+    public function hookActionObjectOrderAddAfter($params)
+    {
+        $dbDeliveryOptions = new DbDeliveryOptionsManagement();
+        $dbDeliveryOptions->setOptions(
+            $params['object']->id,
+            Configuration::get('EMAIL_ADDRESS'),
+            Configuration::get('WISH_MESSAGE'),
+            Configuration::get('PHONE_NUMBER'),
+            Configuration::get('DELIVERY_DATE')
+        );
+
+        Configuration::deleteByName('EMAIL_ADDRESS');
+        Configuration::deleteByName('WISH_MESSAGE');
+        Configuration::deleteByName('PHONE_NUMBER');
+        Configuration::deleteByName('DELIVERY_DATE');
+    }
+
+    public function hookActionValidateStepComplete($params)
+    {
+        $this->context->controller->errors[] = $this->l('Please select a pickup branch!');
+        $params['completed']  = false;
+        dump('test');
+        die;
+    }
+
+    public function hookActionValidateOrder()
+    {
+        $this->context->controller->errors[] = $this->l('Incorrect phone number');
+        Tools::redirect('index.php?controller=order&step=1');
+        // return false;
     }
 
     public function hookHeader()

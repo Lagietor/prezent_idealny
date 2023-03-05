@@ -35,6 +35,15 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_p
     `sms` boolean NOT NULL DEFAULT 1
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
 
+$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_orders` (
+	`id` int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	`id_order` int UNIQUE KEY NOT NULL,
+    `email` text,
+	`wish_message` text,
+	`phone_number` text,
+	`delivery_date` date
+) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;
