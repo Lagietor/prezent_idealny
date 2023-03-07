@@ -13,7 +13,7 @@
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
             <textarea class="serp-watched-description form-control" id="registered_email_wishes" name="registered_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" form="js-delivery"></textarea>
+            maxlength="400" placeholder="Happy Birthday!" form="js-delivery">{$wish_message}</textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -38,18 +38,18 @@
         <div id="other_email_form" style="display: none">
             <span style="color: red">*</span>{l s="Other email: " mod="wishdeliveryselection"}
             <br><br>
-            <input type="text" class="form-control" form="js-delivery" id="other_email_address" name="other_email_address">
+            <input type="text" value="{$email_address}" class="form-control" form="js-delivery" id="other_email_address" name="other_email_address">
             <br><br>
 
             {l s="Delivery date: " mod="wishdeliveryselection"}
             <br><br>
-            <input type="date" name="other_email_datetime" class="input-group datepicker" form="js-delivery">
+            <input type="date" name="other_email_datetime" value="{$delivery_date}" class="input-group datepicker" form="js-delivery">
             <br><br>
 
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
             <textarea class="serp-watched-description form-control" id="other_email_wishes" name="other_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" form="js-delivery"></textarea>
+            maxlength="400" placeholder="Happy Birthday!" form="js-delivery">{$wish_message}</textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -76,7 +76,7 @@
         <div id="sms_form" style="display: none">
             <span style="color: red">*</span> {l s='Phone number :' mod='wishdeliveryselection'}
             <br><br>
-            <input type="text" class="form-control" id="sms_phone_number" name="sms_phone_number" form="js-delivery"
+            <input type="text" class="form-control" value="{$phone_number}" id="sms_phone_number" name="sms_phone_number" form="js-delivery"
             <br>
         </div>
         <br>

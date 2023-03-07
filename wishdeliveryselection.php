@@ -66,10 +66,9 @@ class Wishdeliveryselection extends Module
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('displayBeforeCarrier') &&
-            $this->registerHook('actionObjectCartUpdateBefore') &&
+            $this->registerHook('actionCarrierProcess') &&
             $this->registerHook('actionObjectOrderAddAfter') &&
-            $this->registerHook('header') &&
-            $this->registerHook('actionValidateOrder');
+            $this->registerHook('header');
 
             // actionValidateStepComplete
             // actionCarrierProcess
@@ -136,18 +135,16 @@ class Wishdeliveryselection extends Module
         $productsOptions = $wishForm->getDuplicatedValues($productsOptions);
 
         $this->context->smarty->assign('options', $productsOptions);
+        $this->context->smarty->assign('wish_message', Configuration::get('WISH_MESSAGE'));
+        $this->context->smarty->assign('email_address', Configuration::get('EMAIL_ADDRESS'));
+        $this->context->smarty->assign('delivery_date', Configuration::get('DELIVERY_DATE'));
+        $this->context->smarty->assign('phone_number', Configuration::get('PHONE_NUMBER'));
 
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
     }
 
-    public function hookActionObjectCartUpdateBefore($params)
+    public function hookActionCarrierProcess()
     {
-        // dump(Tools::getAllValues());
-        // die;
-        // dump();
-        // die;
-        // Tools::redirect('index.php');
-
         if ($this->context->controller->php_self !== 'order') {
             return;
         }
@@ -159,6 +156,10 @@ class Wishdeliveryselection extends Module
 
         // check other_email validation
         if (Tools::getValue('wish_form') == "2") {
+            $this->context->smarty->assign('other_email_address_value', Tools::getValue('other_email_address'));
+            $this->context->smarty->assign('other_email_datetime_value', Tools::getValue('other_email_datetime'));
+            $this->context->smarty->assign('other_email_wishes_value', Tools::getValue('other_email_wishes'));
+
             if (!WishValidate::isEmail(Tools::getValue('other_email_address'))) {
                 $this->context->controller->errors[] = $this->l('Incorrect email address');
                 // może jakiś return false
@@ -176,6 +177,8 @@ class Wishdeliveryselection extends Module
 
         // check sms validation
         if (Tools::getValue('wish_form') == "3") {
+            $this->context->smarty->assign('sms_phone_number_value', Tools::getValue('sms_phone_number'));
+
             if (!WishValidate::isPhoneNumber(Tools::getValue('sms_phone_number'))) {
                 $this->context->controller->errors[] = $this->l('Incorrect phone number');
                 // może jakiś return false
@@ -200,21 +203,6 @@ class Wishdeliveryselection extends Module
         Configuration::deleteByName('WISH_MESSAGE');
         Configuration::deleteByName('PHONE_NUMBER');
         Configuration::deleteByName('DELIVERY_DATE');
-    }
-
-    public function hookActionValidateStepComplete($params)
-    {
-        $this->context->controller->errors[] = $this->l('Please select a pickup branch!');
-        $params['completed']  = false;
-        dump('test');
-        die;
-    }
-
-    public function hookActionValidateOrder()
-    {
-        $this->context->controller->errors[] = $this->l('Incorrect phone number');
-        Tools::redirect('index.php?controller=order&step=1');
-        // return false;
     }
 
     public function hookHeader()

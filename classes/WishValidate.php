@@ -17,6 +17,6 @@ class WishValidate
 
     public static function isPhoneNumber(string $phoneNumber)
     {
-        return (Validate::isPhoneNumber($phoneNumber));
+        return (Validate::isPhoneNumber($phoneNumber) && strlen($phoneNumber) == 9);
     }
 }
