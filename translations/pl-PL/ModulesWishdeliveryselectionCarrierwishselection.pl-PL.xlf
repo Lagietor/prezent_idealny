@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="admin884uarckw" source-language="pl-PL" target-language="pl-PL" datatype="plaintext">
+    <body>
+      <trans-unit id="abe5fcad43e69c8b1cfb6f964c5165d1">
+        <source>Choose wish delivery option</source>
+        <target>Wybierz formę wysyłki życzeń</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="46d88816b6a876fc97c58309167a768b">
+        <source>Send Perfect Gift on my email: </source>
+        <target>Wyślij Prezent Idealny na mój email</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9903e40719e3325d1d6a1fc3ca9ac427">
+        <source>Wishes: </source>
+        <target>Życzenia:</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="019d1ca7d50cc54b995f60d456435e87">
+        <source>Used</source>
+        <target>Wykorzystane</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5da618e8e4b89c66fe86e32cdafde142">
+        <source>From</source>
+        <target>z</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5d637c668526d24fa32a61dbe17ff10f">
+        <source>signs</source>
+        <target>znaków</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="972893912e20ebf2f2ab6d3d0fff64a5">
+        <source>Send Perfect Gift on other email</source>
+        <target>Wyślij Prezent Idealny na inny email</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a8a3104afa04ac28f81b616f171374aa">
+        <source>Other email: </source>
+        <target>Inny email:</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ce5e22cbd1d14df317746fc4ce72a166">
+        <source>Delivery date: </source>
+        <target>Data dostawy:</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a76483d7286ffbd53a010f1904231f80">
+        <source>Send SMS</source>
+        <target>Wyślij SMS</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b1a206e9240368a4ccc5065e94ad9500">
+        <source>Phone number :</source>
+        <target>Numer telefonu:</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

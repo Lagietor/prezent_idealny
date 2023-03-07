@@ -1,6 +1,6 @@
 {if $options}
     <h2> 
-        {l s='Choose Perfect Gift delivery' mod='wishdeliveryselection'} 
+        {l s='Choose wish delivery option' mod='wishdeliveryselection'} 
     </h2>
     {* REGISTERED EMAIL *}
     {if isset($options.registered_email) && $options.registered_email == 1}
@@ -36,12 +36,12 @@
             {l s='Send Perfect Gift on other email' mod='wishdeliveryselection'}
         </label>
         <div id="other_email_form" style="display: none">
-            <span style="color: red">*</span>{l s="Other email: " mod="wishdeliveryselection"}
+            <span style="color: red">*</span>{l s='Other email: ' mod='wishdeliveryselection'}
             <br><br>
             <input type="text" value="{$email_address}" class="form-control" form="js-delivery" id="other_email_address" name="other_email_address">
             <br><br>
 
-            {l s="Delivery date: " mod="wishdeliveryselection"}
+            {l s='Delivery date: ' mod='wishdeliveryselection'}
             <br><br>
             <input type="date" name="other_email_datetime" value="{$delivery_date}" class="input-group datepicker" form="js-delivery">
             <br><br>

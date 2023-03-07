@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="admin884uarckw" source-language="pl-PL" target-language="pl-PL" datatype="plaintext">
+    <body>
+      <trans-unit id="f8814271e6449cadba8501a07ef0493b">
+        <source>Wish Delivery Selection</source>
+        <target>Wybór dostawy życzeń</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="177dc49d3a097161f0e8bad80aef1f4c">
+        <source>Gives a possibility to choose in which way the wishes should be delivered</source>
+        <target>Daje możliwość wyboru w jaki sposób życzenia zostaną dostarczone</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="58e6e36f05ba4c50d373303c9c73150d">
+        <source>Incorrect email address</source>
+        <target>Niepoprawny adres email</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="95faa3266149d524f48e226cd7656a92">
+        <source>Delivery date must be set at least one day after today</source>
+        <target>Data dostawy musi być ustawiona przynajmniej na dzień jutrzejszy</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="eb78cbd108174fe8f540887ac35e3c4a">
+        <source>Incorrect phone number</source>
+        <target>Niepoprawny numer telefonu</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
