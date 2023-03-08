@@ -5,7 +5,10 @@
     {* REGISTERED EMAIL *}
     {if isset($options.registered_email) && $options.registered_email == 1}
         <label name="registered_email">
-            <input type="radio" id="registered_email" name="wish_form" form="js-delivery" value="1" checked> 
+            <input type="radio" id="registered_email" name="wish_form" form="js-delivery" value="1"
+            {if $wish_option == "1" || !$wish_option}
+                checked
+            {/if}> 
             {l s='Send Perfect Gift on my email: ' mod='wishdeliveryselection'}
             {$customer.email}
         </label>
@@ -13,7 +16,7 @@
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
             <textarea class="serp-watched-description form-control" id="registered_email_wishes" name="registered_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" form="js-delivery">{$wish_message}</textarea>
+            maxlength="400" placeholder="{l s='Happy Birthday!' mod='wishdeliveryselection'}" form="js-delivery">{$wish_message}</textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -30,7 +33,7 @@
     {if isset($options.other_email) && $options.other_email == 1}
         <label name="other_email">
             <input type="radio" id="other_email" name="wish_form" form="js-delivery" value="2" 
-            {if !isset($options.registered_email) || $options.registered_email != 1}
+            {if (!isset($options.registered_email) || $options.registered_email != 1) || $wish_option == "2"}
                 checked
             {/if}> 
             {l s='Send Perfect Gift on other email' mod='wishdeliveryselection'}
@@ -49,7 +52,7 @@
             <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
             <br><br>
             <textarea class="serp-watched-description form-control" id="other_email_wishes" name="other_email_wishes"
-            maxlength="400" placeholder="Happy Birthday!" form="js-delivery">{$wish_message}</textarea>
+            maxlength="400" placeholder="{l s='Happy Birthday!' mod='wishdeliveryselection'}" form="js-delivery">{$wish_message}</textarea>
             <small class="form-text text-muted text-right maxLength ">
                 <em>
                     {l s='Used' mod='wishdeliveryselection'}
@@ -66,8 +69,9 @@
     {if isset($options.sms) && $options.sms == 1}
         <label name="sms">
             <input type="radio" id="sms" name="wish_form" form="js-delivery" value="3"
-            {if (!isset($options.registered_email) || $options.registered_email != 1) &&
-                (!isset($options.other_email) || $options.other_email != 1)
+            {if ((!isset($options.registered_email) || $options.registered_email != 1) &&
+                (!isset($options.other_email) || $options.other_email != 1)) ||
+                $wish_option == "3"
             }
                 checked
             {/if}>

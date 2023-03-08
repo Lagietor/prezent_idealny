@@ -68,11 +68,8 @@ class Wishdeliveryselection extends Module
             $this->registerHook('displayBeforeCarrier') &&
             $this->registerHook('actionCarrierProcess') &&
             $this->registerHook('actionObjectOrderAddAfter') &&
-            $this->registerHook('header');
-
-            // actionValidateStepComplete
-            // actionCarrierProcess
-            // actionValidateOrder
+            $this->registerHook('header') &&
+            $this->registerHook('actionObjectOrderAddBefore');
     }
 
     public function uninstall()
@@ -139,6 +136,7 @@ class Wishdeliveryselection extends Module
         $this->context->smarty->assign('email_address', Configuration::get('EMAIL_ADDRESS'));
         $this->context->smarty->assign('delivery_date', Configuration::get('DELIVERY_DATE'));
         $this->context->smarty->assign('phone_number', Configuration::get('PHONE_NUMBER'));
+        $this->context->smarty->assign('wish_option', Configuration::get('WISH_OPTION'));
 
         return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
     }
@@ -149,8 +147,14 @@ class Wishdeliveryselection extends Module
             return;
         }
 
+        if ($_COOKIE['wish_error']) {
+            $this->context->controller->errors[] = $_COOKIE['wish_error'];
+            setcookie('wish_error', "", time() - 3600, "/", $_SERVER['SERVER_NAME']);
+        }
+
         // check registered_email validation (there is no validation right now)
         if (Tools::getValue('wish_form') == "1") {
+            Configuration::updateValue('WISH_OPTION', Tools::getValue('wish_form'));
             Configuration::updateValue('WISH_MESSAGE', Tools::getValue('registered_email_wishes'));
         }
 
@@ -160,16 +164,7 @@ class Wishdeliveryselection extends Module
             $this->context->smarty->assign('other_email_datetime_value', Tools::getValue('other_email_datetime'));
             $this->context->smarty->assign('other_email_wishes_value', Tools::getValue('other_email_wishes'));
 
-            if (!WishValidate::isEmail(Tools::getValue('other_email_address'))) {
-                $this->context->controller->errors[] = $this->l('Incorrect email address');
-                // może jakiś return false
-            }
-
-            if (Tools::getValue('other_email_datetime') && !WishValidate::isDate(Tools::getValue('other_email_datetime'))) {
-                $this->context->controller->errors[] = $this->l('Delivery date must be set at least one day after today');
-                // może jakiś return false
-            }
-
+            Configuration::updateValue('WISH_OPTION', Tools::getValue('wish_form'));
             Configuration::updateValue('EMAIL_ADDRESS', Tools::getValue('other_email_address'));
             Configuration::updateValue('DELIVERY_DATE', Tools::getValue('other_email_datetime'));
             Configuration::updateValue('WISH_MESSAGE', Tools::getValue('other_email_wishes'));
@@ -179,11 +174,7 @@ class Wishdeliveryselection extends Module
         if (Tools::getValue('wish_form') == "3") {
             $this->context->smarty->assign('sms_phone_number_value', Tools::getValue('sms_phone_number'));
 
-            if (!WishValidate::isPhoneNumber(Tools::getValue('sms_phone_number'))) {
-                $this->context->controller->errors[] = $this->l('Incorrect phone number');
-                // może jakiś return false
-            }
-
+            Configuration::updateValue('WISH_OPTION', Tools::getValue('wish_form'));
             Configuration::updateValue('PHONE_NUMBER', Tools::getValue('sms_phone_number'));
         }
     }
@@ -203,12 +194,37 @@ class Wishdeliveryselection extends Module
         Configuration::deleteByName('WISH_MESSAGE');
         Configuration::deleteByName('PHONE_NUMBER');
         Configuration::deleteByName('DELIVERY_DATE');
+        Configuration::deleteByName('WISH_OPTION');
     }
 
     public function hookHeader()
     {
         if ($this->context->controller->php_self === 'order') {
             $this->context->controller->addJS($this->_path . 'views/js/carrierformslider.js');
+        }
+    }
+
+    public function hookActionObjectOrderAddBefore()
+    {
+        // check other_email validation
+        if (Configuration::get('WISH_OPTION') == "2") {
+            if (!WishValidate::isEmail(Configuration::get('EMAIL_ADDRESS'))) {
+                setcookie('wish_error', $this->l('Incorrect email address'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                Tools::redirect($_SERVER['HTTP_REFERER']);
+            }
+
+            if (Configuration::get('DELIVERY_DATE') && !WishValidate::isDate(Configuration::get('DELIVERY_DATE'))) {
+                setcookie('wish_error', $this->l('Delivery date must be set at least one day after today'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                Tools::redirect($_SERVER['HTTP_REFERER']);
+            }
+        }
+
+        // check sms validation
+        if (Configuration::get('WISH_OPTION') == "3") {
+            if (!WishValidate::isPhoneNumber(Configuration::get('PHONE_NUMBER'))) {
+                setcookie('wish_error', $this->l('Incorrect phone number'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                Tools::redirect($_SERVER['HTTP_REFERER']);
+            }
         }
     }
 }

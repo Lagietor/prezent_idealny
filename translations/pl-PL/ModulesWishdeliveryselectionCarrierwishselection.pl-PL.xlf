@@ -17,6 +17,11 @@
         <target>Życzenia:</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="fa64e37875addd15cd7b93931bb6cf38">
+        <source>Happy Birthday!</source>
+        <target>Wszystkiego Najlepszego!</target>
+        <note>Line: </note>
+      </trans-unit>
       <trans-unit id="019d1ca7d50cc54b995f60d456435e87">
         <source>Used</source>
         <target>Wykorzystane</target>
