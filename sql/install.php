@@ -30,9 +30,10 @@ $sql = array();
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_product_options` (
     `id` int PRIMARY KEY AUTO_INCREMENT NOT NULL,
     `id_product` int UNIQUE NOT NULL,
-    `registered_email` boolean NOT NULL DEFAULT 1,
-    `other_email` boolean NOT NULL DEFAULT 1,
-    `sms` boolean NOT NULL DEFAULT 1
+    `id_category` int NOT NULL,
+    `registered_email` boolean NOT NULL DEFAULT 0,
+    `other_email` boolean NOT NULL DEFAULT 0,
+    `sms` boolean NOT NULL DEFAULT 0
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_orders` (

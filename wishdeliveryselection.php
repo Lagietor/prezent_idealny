@@ -34,11 +34,14 @@ require __DIR__ . '/classes/WishForm.php';
 require __DIR__ . '/classes/WishValidate.php';
 require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
 
-
 class Wishdeliveryselection extends Module
 {
     protected $config_form = false;
-    public $test;
+    private $formMessage;
+
+    private const REGISTERED_EMAIL_NAME = 'WISHDELIVERYSELECTION_REGISTERED_EMAIL';
+    private const OTHER_EMAIL_NAME = 'WISHDELIVERYSELECTION_OTHER_EMAIL';
+    private const SMS_NAME = 'WISHDELIVERYSELECTION_SMS';
 
     public function __construct()
     {
@@ -62,6 +65,10 @@ class Wishdeliveryselection extends Module
     {
         include(dirname(__FILE__) . '/sql/install.php');
 
+        Configuration::updateValue(self::REGISTERED_EMAIL_NAME, 0);
+        Configuration::updateValue(self::OTHER_EMAIL_NAME, 0);
+        Configuration::updateValue(self::SMS_NAME, 0);
+
         return parent::install() &&
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionObjectProductUpdateAfter') &&
@@ -79,44 +86,122 @@ class Wishdeliveryselection extends Module
         return parent::uninstall();
     }
 
-    public function saveProductOptions()
+    public function getContent()
     {
-        $dbProductOptions = new DbProductOptionsManagement();
-        $dbProductOptions->setOptions($_COOKIE["id_product"], (bool)$_COOKIE['registered_email'], (bool)$_COOKIE['other_email'], (bool)$_COOKIE['sms']);
+        $this->formMessage = '';
 
-        setcookie('id_product', "", time() - 3600);
-        setcookie('sms', "", time() - 3600);
-        setcookie('registered_email', "", time() - 3600);
-        setcookie('other_email', "", time() - 3600);
-    }
-
-    public function hookDisplayAdminProductsExtra()
-    {
-        if ($_COOKIE['id_product']) {
-            $this->saveProductOptions();
+        if (((bool)Tools::isSubmit('submitWishdeliveryselectionModule')) == true) {
+            $this->postProcess();
         }
 
-        global $kernel;
-        $requestStack = $kernel->getContainer()->get('request_stack');
-        $request = $requestStack->getCurrentRequest();
-        $idProduct = $request->get('id');
+        $this->context->smarty->assign([
+            'registered_email' => Configuration::get(self::REGISTERED_EMAIL_NAME),
+            'other_email' => Configuration::get(self::OTHER_EMAIL_NAME),
+            'sms' => Configuration::get(self::SMS_NAME),
+        ]);
 
-        $dbProductOptions = new DbProductOptionsManagement();
-        $productOptions = $dbProductOptions->getProductOptions($idProduct);
+        $form = $this->context->smarty->fetch($this->local_path . 'views/templates/admin/productwishselection.tpl');
 
-        $this->context->smarty->assign('productOptions', $productOptions);
-
-        $this->context->smarty->assign('test', $idProduct);
-        return $this->display(__FILE__, '/views/templates/admin/productwishselection.tpl');
+        return $this->formMessage . $this->renderList() . $form;
     }
 
-    public function hookActionObjectProductUpdateAfter($params)
+    public function postProcess()
     {
-        setcookie('id_product', $params['object']->id, time() + 3600);
+        Configuration::updateValue(self::REGISTERED_EMAIL_NAME, Tools::getValue('registered_email'));
+        Configuration::updateValue(self::OTHER_EMAIL_NAME, Tools::getValue('other_email'));
+        Configuration::updateValue(self::SMS_NAME, Tools::getValue('sms'));
 
-        setcookie('registered_email', Tools::getValue('registered_email', 0), time() + 3600);
-        setcookie('other_email', Tools::getValue('other_email', 0), time() + 3600);
-        setcookie('sms', Tools::getValue('sms', 0), time() + 3600);
+        $productOptions = new DbProductOptionsManagement();
+        if (Tools::getValue('wishdeliveryselection_productsBox')) {
+            if (
+                $productOptions->setOptions(
+                    Tools::getValue('wishdeliveryselection_productsBox'),
+                    Tools::getValue('registered_email'),
+                    Tools::getValue('other_email'),
+                    Tools::getValue('sms')
+                )
+            ) {
+                $this->formMessage = $this->displayConfirmation($this->l('Data was sent successfully'));
+            }
+        } else {
+            $this->formMessage = $this->displayError($this->l('There is nothing to add'));
+        }
+    }
+
+    public function renderList()
+    {
+        $fields_list = array(
+            'id_product' => array(
+                'title' => $this->l('ID'),
+                'width' => 120,
+                'type' => 'text',
+                'search' => false,
+                'orderby' => false,
+            ),
+            'product_name' => array(
+                'title' => $this->l('Product'),
+                'width' => 120,
+                'type' => 'text',
+                'search' => true,
+                'orderby' => false
+            ),
+            'category_name' => array(
+                'title' => $this->l('Category'),
+                'width' => 140,
+                'type' => 'text',
+                'search' => true,
+                'orderby' => false
+            ),
+        );
+
+        $helper = new HelperList();
+
+        $helper->simple_header = false;
+
+        $helper->bulk_actions = true;
+        $helper->identifier = 'id_product';
+        $helper->show_toolbar = true;
+        $helper->title = $this->l('Choose products');
+        $helper->table = $this->name . '_products';
+
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
+
+        $productName = (Tools::getValue('wishdeliveryselection_productsFilter_product_name'))
+        ? Tools::getValue('wishdeliveryselection_productsFilter_product_name') : null;
+
+        $categoryName = Tools::getValue('wishdeliveryselection_productsFilter_category_name')
+        ? Tools::getValue('wishdeliveryselection_productsFilter_category_name') : null;
+
+        if ((bool)Tools::isSubmit('submitResetwishdeliveryselection_products')) {
+            $query = $this->queryBuilder();
+        } else {
+            $query = $this->queryBuilder($productName, $categoryName);
+        }
+
+        $result = Db::getInstance()->executeS($query);
+        return $helper->generateList($result, $fields_list);
+    }
+
+    private function queryBuilder(string $productName = null, string $categoryName = null): string
+    {
+        $query = "SELECT DISTINCT
+        p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name' 
+        FROM " . _DB_PREFIX_ . "product p
+        JOIN " . _DB_PREFIX_ . "product_lang pl ON p.id_product = pl.id_product ";
+
+        if (isset($productName)) {
+            $query .= "AND pl.name LIKE '$productName%' ";
+        }
+
+        $query .= 'JOIN ' . _DB_PREFIX_ . 'category_lang pc ON p.id_category_default = pc.id_category ';
+
+        if (isset($categoryName)) {
+            $query .= "AND pc.name LIKE '$categoryName%' ";
+        }
+
+        $query .= 'ORDER BY p.id_product ASC';
+        return $query;
     }
 
     public function hookDisplayBeforeCarrier($params)

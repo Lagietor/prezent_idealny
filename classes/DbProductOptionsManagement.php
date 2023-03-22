@@ -23,8 +23,6 @@ class DbProductOptionsManagement
     public function getProductsOptions(array $idsProducts): array
     {
         $conditions = 'id_product = ' . implode(' || id_product = ', $idsProducts);
-        // dump($conditions);
-        // die;
 
         $query = new DbQuery();
         $query->select('registered_email, other_email, sms')
@@ -36,12 +34,26 @@ class DbProductOptionsManagement
         return $result;
     }
 
-    public function setOptions(int $idProduct, bool $registeredEmail, bool $otherEmail, bool $sms): void
+    public function setOptions(array $idProducts, bool $registeredEmail, bool $otherEmail, bool $sms): bool
     {
-        $query = 'REPLACE INTO `' . _DB_PREFIX_ . self::TABLE_NAME . '`(
-            `id_product`, `registered_email`, `other_email`, `sms`) VALUES (
-            ' . $idProduct . ', ' . (int)$registeredEmail . ', ' . (int)$otherEmail . ', ' . (int)$sms . ')';
+        if (empty($idProducts)) {
+            return false;
+        }
 
-        Db::getInstance()->executeS($query);
+        $query = 'REPLACE INTO `' . _DB_PREFIX_ . self::TABLE_NAME . '`(
+            `id_product`, `id_category`, `registered_email`, `other_email`, `sms`) VALUES ';
+
+        foreach ($idProducts as $index => $idProduct) {
+            if ($index != 0) {
+                $query .= ', ';
+            }
+
+            $product = new Product($idProduct);
+            $idCategory = $product->id_category_default;
+
+            $query .= '(' . (int)$idProduct . ', ' . (int)$idCategory . ', ' . (int)$registeredEmail . ', ' . (int)$otherEmail . ', ' . (int)$sms . ')';
+        }
+
+        return Db::getInstance()->executeS($query);
     }
 }
