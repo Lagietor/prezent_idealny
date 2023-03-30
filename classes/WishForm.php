@@ -21,9 +21,9 @@ class WishForm
 
             for ($i = 0; $i < $diff; $i++) {
                 $productsOptions[] = [
-                    'registered_email' => '1',
-                    'other_email' => '1',
-                    'sms' => '1'
+                    'registered_email' => '0',
+                    'other_email' => '0',
+                    'sms' => '0'
                 ];
             }
         }

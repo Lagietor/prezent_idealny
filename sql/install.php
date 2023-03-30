@@ -45,6 +45,14 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_o
 	`delivery_date` date
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
 
+$sql[] = "CREATE VIEW IF NOT EXISTS " . _DB_PREFIX_ . "wishformlist AS
+        SELECT DISTINCT
+        p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name' 
+        FROM " . _DB_PREFIX_ . "product p
+        JOIN " . _DB_PREFIX_ . "product_lang pl ON p.id_product = pl.id_product
+        JOIN " . _DB_PREFIX_ . "category_lang pc ON p.id_category_default = pc.id_category
+        ORDER BY p.id_product ASC";
+
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
         return false;

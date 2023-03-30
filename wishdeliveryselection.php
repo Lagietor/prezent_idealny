@@ -33,15 +33,17 @@ require __DIR__ . '/classes/DbProductOptionsManagement.php';
 require __DIR__ . '/classes/WishForm.php';
 require __DIR__ . '/classes/WishValidate.php';
 require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
+require __DIR__ . '/classes/WishHelperList.php';
 
 class Wishdeliveryselection extends Module
 {
     protected $config_form = false;
     private $formMessage;
 
-    private const REGISTERED_EMAIL_NAME = 'WISHDELIVERYSELECTION_REGISTERED_EMAIL';
-    private const OTHER_EMAIL_NAME = 'WISHDELIVERYSELECTION_OTHER_EMAIL';
-    private const SMS_NAME = 'WISHDELIVERYSELECTION_SMS';
+    public const REGISTERED_EMAIL_NAME = 'WISHDELIVERYSELECTION_REGISTERED_EMAIL';
+    public const OTHER_EMAIL_NAME = 'WISHDELIVERYSELECTION_OTHER_EMAIL';
+    public const SMS_NAME = 'WISHDELIVERYSELECTION_SMS';
+    public const MODULE_ADMIN_CONTROLLER = 'AdminWishForm';
 
     public function __construct()
     {
@@ -76,33 +78,53 @@ class Wishdeliveryselection extends Module
             $this->registerHook('actionCarrierProcess') &&
             $this->registerHook('actionObjectOrderAddAfter') &&
             $this->registerHook('header') &&
-            $this->registerHook('actionObjectOrderAddBefore');
+            $this->registerHook('actionObjectOrderAddBefore') &&
+            $this->registerHook('actionPresentCart') &&
+            $this->installTabs();
     }
 
     public function uninstall()
     {
         include(dirname(__FILE__) . '/sql/uninstall.php');
 
-        return parent::uninstall();
+        return parent::uninstall() &&
+        $this->uninstallTabs();
+    }
+
+    public function installTabs()
+    {
+        if (Tab::getIdFromClassName(static::MODULE_ADMIN_CONTROLLER)) {
+            return true;
+        }
+
+        $tab = new Tab();
+        $tab->class_name = static::MODULE_ADMIN_CONTROLLER;
+        $tab->module = $this->name;
+        $tab->active = true;
+        $tab->id_parent = -1;
+        $tab->name = array_fill_keys(
+            Language::getIDs(false),
+            $this->displayName
+        );
+
+        return $tab->add();
+    }
+
+    public function uninstallTabs()
+    {
+        $id_tab = (int) Tab::getIdFromClassName(static::MODULE_ADMIN_CONTROLLER);
+
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            return $tab->delete();
+        }
+
+        return true;
     }
 
     public function getContent()
     {
-        $this->formMessage = '';
-
-        if (((bool)Tools::isSubmit('submitWishdeliveryselectionModule')) == true) {
-            $this->postProcess();
-        }
-
-        $this->context->smarty->assign([
-            'registered_email' => Configuration::get(self::REGISTERED_EMAIL_NAME),
-            'other_email' => Configuration::get(self::OTHER_EMAIL_NAME),
-            'sms' => Configuration::get(self::SMS_NAME),
-        ]);
-
-        $form = $this->context->smarty->fetch($this->local_path . 'views/templates/admin/productwishselection.tpl');
-
-        return $this->formMessage . $this->renderList() . $form;
+        Tools::redirectAdmin($this->context->link->getAdminLink(static::MODULE_ADMIN_CONTROLLER));
     }
 
     public function postProcess()
@@ -121,87 +143,18 @@ class Wishdeliveryselection extends Module
                     Tools::getValue('sms')
                 )
             ) {
-                $this->formMessage = $this->displayConfirmation($this->l('Data was sent successfully'));
+                $this->formMessage = $this->displayConfirmation($this->l('Data was saved successfully'));
             }
         } else {
             $this->formMessage = $this->displayError($this->l('There is nothing to add'));
         }
     }
 
-    public function renderList()
+    public function hookHeader()
     {
-        $fields_list = array(
-            'id_product' => array(
-                'title' => $this->l('ID'),
-                'width' => 120,
-                'type' => 'text',
-                'search' => false,
-                'orderby' => false,
-            ),
-            'product_name' => array(
-                'title' => $this->l('Product'),
-                'width' => 120,
-                'type' => 'text',
-                'search' => true,
-                'orderby' => false
-            ),
-            'category_name' => array(
-                'title' => $this->l('Category'),
-                'width' => 140,
-                'type' => 'text',
-                'search' => true,
-                'orderby' => false
-            ),
-        );
-
-        $helper = new HelperList();
-
-        $helper->simple_header = false;
-
-        $helper->bulk_actions = true;
-        $helper->identifier = 'id_product';
-        $helper->show_toolbar = true;
-        $helper->title = $this->l('Choose products');
-        $helper->table = $this->name . '_products';
-
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-
-        $productName = (Tools::getValue('wishdeliveryselection_productsFilter_product_name'))
-        ? Tools::getValue('wishdeliveryselection_productsFilter_product_name') : null;
-
-        $categoryName = Tools::getValue('wishdeliveryselection_productsFilter_category_name')
-        ? Tools::getValue('wishdeliveryselection_productsFilter_category_name') : null;
-
-        if ((bool)Tools::isSubmit('submitResetwishdeliveryselection_products')) {
-            $query = $this->queryBuilder();
-        } else {
-            $query = $this->queryBuilder($productName, $categoryName);
+        if ($this->context->controller->php_self === 'order') {
+            $this->context->controller->addJS($this->_path . 'views/js/carrierformslider.js');
         }
-
-        $result = Db::getInstance()->executeS($query);
-        return $helper->generateList($result, $fields_list);
-    }
-
-    private function queryBuilder(string $productName = null, string $categoryName = null): string
-    {
-        $query = "SELECT DISTINCT
-        p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name' 
-        FROM " . _DB_PREFIX_ . "product p
-        JOIN " . _DB_PREFIX_ . "product_lang pl ON p.id_product = pl.id_product ";
-
-        if (isset($productName)) {
-            $query .= "AND pl.name LIKE '$productName%' ";
-        }
-
-        $query .= 'JOIN ' . _DB_PREFIX_ . 'category_lang pc ON p.id_category_default = pc.id_category ';
-
-        if (isset($categoryName)) {
-            $query .= "AND pc.name LIKE '$categoryName%' ";
-        }
-
-        $query .= 'ORDER BY p.id_product ASC';
-        return $query;
     }
 
     public function hookDisplayBeforeCarrier($params)
@@ -228,13 +181,10 @@ class Wishdeliveryselection extends Module
 
     public function hookActionCarrierProcess()
     {
-        if ($this->context->controller->php_self !== 'order') {
-            return;
-        }
-
-        if ($_COOKIE['wish_error']) {
+        if (isset($_COOKIE['wish_error'])) {
             $this->context->controller->errors[] = $_COOKIE['wish_error'];
             setcookie('wish_error', "", time() - 3600, "/", $_SERVER['SERVER_NAME']);
+            return;
         }
 
         // check registered_email validation (there is no validation right now)
@@ -262,44 +212,66 @@ class Wishdeliveryselection extends Module
             Configuration::updateValue('WISH_OPTION', Tools::getValue('wish_form'));
             Configuration::updateValue('PHONE_NUMBER', Tools::getValue('sms_phone_number'));
         }
+
+        $this->validateForm();
+    }
+
+    public function hookActionObjectOrderAddBefore()
+    {
+        $this->validateForm();
     }
 
     public function hookActionObjectOrderAddAfter($params)
     {
         $dbDeliveryOptions = new DbDeliveryOptionsManagement();
-        $dbDeliveryOptions->setOptions(
-            $params['object']->id,
-            Configuration::get('EMAIL_ADDRESS'),
-            Configuration::get('WISH_MESSAGE'),
-            Configuration::get('PHONE_NUMBER'),
-            Configuration::get('DELIVERY_DATE')
-        );
 
-        Configuration::deleteByName('EMAIL_ADDRESS');
+        switch (Configuration::get('WISH_OPTION')) {
+            case 1:
+                $dbDeliveryOptions->setOptions(
+                    $params['object']->id,
+                    null,
+                    Configuration::get('WISH_MESSAGE')
+                );
+                break;
+            case 2:
+                $dbDeliveryOptions->setOptions(
+                    $params['object']->id,
+                    Configuration::get('EMAIL_ADDRESS'),
+                    Configuration::get('WISH_MESSAGE'),
+                    null,
+                    Configuration::get('DELIVERY_DATE')
+                );
+                break;
+            case 3:
+                $dbDeliveryOptions->setOptions(
+                    $params['object']->id,
+                    null,
+                    null,
+                    Configuration::get('PHONE_NUMBER')
+                );
+                break;
+        }
+
         Configuration::deleteByName('WISH_MESSAGE');
+        Configuration::deleteByName('EMAIL_ADDRESS');
         Configuration::deleteByName('PHONE_NUMBER');
         Configuration::deleteByName('DELIVERY_DATE');
         Configuration::deleteByName('WISH_OPTION');
     }
 
-    public function hookHeader()
-    {
-        if ($this->context->controller->php_self === 'order') {
-            $this->context->controller->addJS($this->_path . 'views/js/carrierformslider.js');
-        }
-    }
-
-    public function hookActionObjectOrderAddBefore()
+    public function validateForm()
     {
         // check other_email validation
         if (Configuration::get('WISH_OPTION') == "2") {
             if (!WishValidate::isEmail(Configuration::get('EMAIL_ADDRESS'))) {
                 setcookie('wish_error', $this->l('Incorrect email address'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                // Tools::redirect('index.php?controller=order&step=3');
                 Tools::redirect($_SERVER['HTTP_REFERER']);
             }
 
             if (Configuration::get('DELIVERY_DATE') && !WishValidate::isDate(Configuration::get('DELIVERY_DATE'))) {
                 setcookie('wish_error', $this->l('Delivery date must be set at least one day after today'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                // Tools::redirect('index.php?controller=order&step=3');
                 Tools::redirect($_SERVER['HTTP_REFERER']);
             }
         }
@@ -308,8 +280,20 @@ class Wishdeliveryselection extends Module
         if (Configuration::get('WISH_OPTION') == "3") {
             if (!WishValidate::isPhoneNumber(Configuration::get('PHONE_NUMBER'))) {
                 setcookie('wish_error', $this->l('Incorrect phone number'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                // Tools::redirect('index.php?controller=order&step=3');
                 Tools::redirect($_SERVER['HTTP_REFERER']);
             }
+        }
+    }
+
+    public function hookActionPresentCart()
+    {
+        if ($this->context->cart->getProducts() == null && Configuration::get('WISH_OPTION') != null) {
+            Configuration::deleteByName('WISH_MESSAGE');
+            Configuration::deleteByName('EMAIL_ADDRESS');
+            Configuration::deleteByName('PHONE_NUMBER');
+            Configuration::deleteByName('DELIVERY_DATE');
+            Configuration::deleteByName('WISH_OPTION');
         }
     }
 }
