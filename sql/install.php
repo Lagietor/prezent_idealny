@@ -45,7 +45,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_o
 	`delivery_date` date
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
 
-$sql[] = "CREATE VIEW IF NOT EXISTS " . _DB_PREFIX_ . "wishformlist AS
+$sql[] = "CREATE OR REPLACE VIEW " . _DB_PREFIX_ . "wishformlist AS
         SELECT DISTINCT
         p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name' 
         FROM " . _DB_PREFIX_ . "product p
