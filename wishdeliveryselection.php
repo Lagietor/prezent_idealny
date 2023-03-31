@@ -176,7 +176,7 @@ class Wishdeliveryselection extends Module
         $this->context->smarty->assign('phone_number', Configuration::get('PHONE_NUMBER'));
         $this->context->smarty->assign('wish_option', Configuration::get('WISH_OPTION'));
 
-        return $this->display(__FILE__, '/views/templates/admin/carrierwishselection.tpl');
+        return $this->display(__FILE__, '/views/templates/front/carrierwishselection.tpl');
     }
 
     public function hookActionCarrierProcess()

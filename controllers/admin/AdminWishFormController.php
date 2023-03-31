@@ -57,6 +57,24 @@ class AdminWishFormController extends ModuleAdminController
     {
         parent::initContent();
 
+        // after pressing "View" button in helperList
+        if (Tools::getValue('id_product')) {
+            $dbProductOptionsManagement = new DbProductOptionsManagement();
+            $productOptions = $dbProductOptionsManagement->getProductOptions(Tools::getValue('id_product'));
+
+            $this->context->smarty->assign([
+                'registered_email' => $productOptions['registered_email'],
+                'other_email' => $productOptions['other_email'],
+                'sms' => $productOptions['sms'],
+            ]);
+
+            $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'wishdeliveryselection/views/templates/admin/selectedoptions.tpl');
+            $this->context->smarty->assign('content', $this->content . $content);
+
+            return;
+        }
+
+        // form under helperlist and validation
         $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'wishdeliveryselection/views/templates/admin/productwishselection.tpl');
         $this->context->smarty->assign([
             'content' => $this->content . $content,
