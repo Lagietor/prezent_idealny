@@ -30,15 +30,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 require __DIR__ . '/classes/DbProductOptionsManagement.php';
+require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
 require __DIR__ . '/classes/WishForm.php';
 require __DIR__ . '/classes/WishValidate.php';
-require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
 require __DIR__ . '/classes/WishHelperList.php';
 
 class Wishdeliveryselection extends Module
 {
     protected $config_form = false;
-    private $formMessage;
 
     public const REGISTERED_EMAIL_NAME = 'WISHDELIVERYSELECTION_REGISTERED_EMAIL';
     public const OTHER_EMAIL_NAME = 'WISHDELIVERYSELECTION_OTHER_EMAIL';
@@ -80,6 +79,7 @@ class Wishdeliveryselection extends Module
             $this->registerHook('header') &&
             $this->registerHook('actionObjectOrderAddBefore') &&
             $this->registerHook('actionPresentCart') &&
+            $this->registerHook('actionCartSave') &&
             $this->installTabs();
     }
 
@@ -127,33 +127,11 @@ class Wishdeliveryselection extends Module
         Tools::redirectAdmin($this->context->link->getAdminLink(static::MODULE_ADMIN_CONTROLLER));
     }
 
-    public function postProcess()
-    {
-        Configuration::updateValue(self::REGISTERED_EMAIL_NAME, Tools::getValue('registered_email'));
-        Configuration::updateValue(self::OTHER_EMAIL_NAME, Tools::getValue('other_email'));
-        Configuration::updateValue(self::SMS_NAME, Tools::getValue('sms'));
-
-        $productOptions = new DbProductOptionsManagement();
-        if (Tools::getValue('wishdeliveryselection_productsBox')) {
-            if (
-                $productOptions->setOptions(
-                    Tools::getValue('wishdeliveryselection_productsBox'),
-                    Tools::getValue('registered_email'),
-                    Tools::getValue('other_email'),
-                    Tools::getValue('sms')
-                )
-            ) {
-                $this->formMessage = $this->displayConfirmation($this->l('Data was saved successfully'));
-            }
-        } else {
-            $this->formMessage = $this->displayError($this->l('There is nothing to add'));
-        }
-    }
-
     public function hookHeader()
     {
         if ($this->context->controller->php_self === 'order') {
             $this->context->controller->addJS($this->_path . 'views/js/carrierformslider.js');
+            $this->context->controller->addJS($this->_path . 'views/js/carrierformvalidator.js');
         }
     }
 
@@ -286,9 +264,9 @@ class Wishdeliveryselection extends Module
         }
     }
 
-    public function hookActionPresentCart()
+    public function hookActionCartSave()
     {
-        if ($this->context->cart->getProducts() == null && Configuration::get('WISH_OPTION') != null) {
+        if (Configuration::get('WISH_OPTION') != null) {
             Configuration::deleteByName('WISH_MESSAGE');
             Configuration::deleteByName('EMAIL_ADDRESS');
             Configuration::deleteByName('PHONE_NUMBER');

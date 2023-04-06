@@ -12,7 +12,7 @@ class WishValidate
 
     public static function isEmail(string $email)
     {
-        return (Validate::isEmail($email));
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     public static function isPhoneNumber(string $phoneNumber)
