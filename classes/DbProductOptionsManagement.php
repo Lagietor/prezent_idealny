@@ -34,6 +34,18 @@ class DbProductOptionsManagement
         return $result;
     }
 
+    public function getProductName(int $idProduct): string
+    {
+
+        $query = new DbQuery();
+        $query->select('product_name')
+            ->from('wishformlist')
+            ->where('id_product = ' . $idProduct);
+        $result = Db::getInstance()->getValue($query);
+
+        return $result;
+    }
+
     public function setOptions(array $idProducts, bool $registeredEmail, bool $otherEmail, bool $sms): bool
     {
         if (empty($idProducts)) {

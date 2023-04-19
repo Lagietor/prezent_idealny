@@ -1,6 +1,9 @@
 <div class="panel col-lg-12">
     <div class="panel-heading"> 
         {l s='See selected options' mod='wishdeliveryselection'} 
+        <label name = "name">
+            {$name}
+        </label>
     </div>
     <label name="registered_email">
         <input type="checkbox" name="registered_email" value="true" disabled  form="form-wishformlist"

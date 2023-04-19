@@ -39,6 +39,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_p
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_orders` (
 	`id` int PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	`id_order` int UNIQUE KEY NOT NULL,
+    `wish_option` int NOT NULL,
     `email` text,
 	`wish_message` text,
 	`phone_number` text,
@@ -47,10 +48,14 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wishdeliveryselection_o
 
 $sql[] = "CREATE OR REPLACE VIEW " . _DB_PREFIX_ . "wishformlist AS
         SELECT DISTINCT
-        p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name' 
+        p.id_product, pl.name as 'product_name', p.id_category_default as 'id_category', pc.name as 'category_name', 
+        IF(w.registered_email, true, false) as 'registered_email', 
+        IF(w.other_email, true, false) as 'other_email',
+        IF(w.sms, true, false) as 'sms'
         FROM " . _DB_PREFIX_ . "product p
         JOIN " . _DB_PREFIX_ . "product_lang pl ON p.id_product = pl.id_product AND pl.id_lang = " . Configuration::get('PS_LANG_DEFAULT') . " 
         JOIN " . _DB_PREFIX_ . "category_lang pc ON p.id_category_default = pc.id_category AND pc.id_lang = " . Configuration::get('PS_LANG_DEFAULT') . " 
+        LEFT JOIN " . _DB_PREFIX_ . "wishdeliveryselection_product_options w ON p.id_product = w.id_product
         ORDER BY p.id_product ASC";
 
 foreach ($sql as $query) {

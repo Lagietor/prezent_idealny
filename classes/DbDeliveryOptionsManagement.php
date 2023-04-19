@@ -6,6 +6,7 @@ class DbDeliveryOptionsManagement
 
     public function setOptions(
         int $idOrder,
+        int $wishOption,
         string $email = null,
         string $wishMessage = null,
         string $phoneNumber = null,
@@ -13,6 +14,7 @@ class DbDeliveryOptionsManagement
     ) {
         Db::getInstance()->insert(self::TABLE_NAME, [
             'id_order' => $idOrder,
+            'wish_option' => $wishOption,
             'email' => "$email",
             'wish_message' => "$wishMessage",
             'phone_number' => "$phoneNumber",

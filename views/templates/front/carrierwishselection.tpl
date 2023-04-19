@@ -82,7 +82,7 @@
                 {l s='Send SMS' mod='wishdeliveryselection'}
             </label>
             <div id="sms_form" style="display: none">
-                <span style="color: red">*</span> {l s='Phone number :' mod='wishdeliveryselection'}
+                <span style="color: red">*</span> {l s='Phone number (+48)' mod='wishdeliveryselection'}
                 <br><br>
                 <input type="text" class="form-control" value="{$phone_number}" id="sms_phone_number" name="sms_phone_number" form="js-delivery"
                 <br>

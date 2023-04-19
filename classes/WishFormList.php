@@ -16,7 +16,10 @@ class WishFormList extends ObjectModel
             'id_product' => ['type' => self::TYPE_INT],
             'product_name' => ['type' => self::TYPE_STRING],
             'id_category' => ['type' => self::TYPE_INT],
-            'category_name' => ['type' => self::TYPE_STRING]
+            'category_name' => ['type' => self::TYPE_STRING],
+            'registered_email' => ['type' => self::TYPE_BOOL],
+            'other_email' => ['type' => self::TYPE_BOOL],
+            'sms' => ['type' => self::TYPE_BOOL],
         ]
     ];
 }

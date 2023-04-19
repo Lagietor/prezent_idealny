@@ -33,7 +33,6 @@ require __DIR__ . '/classes/DbProductOptionsManagement.php';
 require __DIR__ . '/classes/DbDeliveryOptionsManagement.php';
 require __DIR__ . '/classes/WishForm.php';
 require __DIR__ . '/classes/WishValidate.php';
-require __DIR__ . '/classes/WishHelperList.php';
 
 class Wishdeliveryselection extends Module
 {
@@ -207,6 +206,7 @@ class Wishdeliveryselection extends Module
             case 1:
                 $dbDeliveryOptions->setOptions(
                     $params['object']->id,
+                    Configuration::get('WISH_OPTION'),
                     null,
                     Configuration::get('WISH_MESSAGE')
                 );
@@ -214,6 +214,7 @@ class Wishdeliveryselection extends Module
             case 2:
                 $dbDeliveryOptions->setOptions(
                     $params['object']->id,
+                    Configuration::get('WISH_OPTION'),
                     Configuration::get('EMAIL_ADDRESS'),
                     Configuration::get('WISH_MESSAGE'),
                     null,
@@ -223,6 +224,7 @@ class Wishdeliveryselection extends Module
             case 3:
                 $dbDeliveryOptions->setOptions(
                     $params['object']->id,
+                    Configuration::get('WISH_OPTION'),
                     null,
                     null,
                     Configuration::get('PHONE_NUMBER')

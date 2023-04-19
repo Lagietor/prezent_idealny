@@ -45,6 +45,38 @@ class AdminWishFormController extends ModuleAdminController
                 'orderby' => false,
                 'remove_onclick' => true
             ),
+            'registered_email' => array(
+                'title' => $this->module->l('Registered Email'),
+                'width' => 100,
+                'type' => 'bool',
+                'search' => false,
+                'orderby' => true,
+                'remove_onclick' => true,
+                // 'active' => 'status'
+                'activeVisu' => 'new_window'
+            ),
+            'other_email' => array(
+                'title' => $this->module->l('Other Email'),
+                'width' => 100,
+                'type' => 'bool',
+                'search' => false,
+                'orderby' => true,
+                'remove_onclick' => true,
+                'align' => 'center',
+                'activeVisu' => 'new_window'
+                // 'active' => 'status'
+            ),
+            'sms' => array(
+                'title' => $this->module->l('Sms'),
+                'width' => 100,
+                'type' => 'bool',
+                'search' => false,
+                'orderby' => true,
+                'remove_onclick' => true,
+                'align' => 'center',
+                'activeVisu' => 'new_window'
+                // 'active' => 'status'
+            )
         );
     }
 
@@ -61,11 +93,13 @@ class AdminWishFormController extends ModuleAdminController
         if (Tools::getValue('id_product')) {
             $dbProductOptionsManagement = new DbProductOptionsManagement();
             $productOptions = $dbProductOptionsManagement->getProductOptions(Tools::getValue('id_product'));
+            $productName = $dbProductOptionsManagement->getProductName(Tools::getValue('id_product'));
 
             $this->context->smarty->assign([
                 'registered_email' => $productOptions['registered_email'],
                 'other_email' => $productOptions['other_email'],
                 'sms' => $productOptions['sms'],
+                'name' => $productName,
             ]);
 
             $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'wishdeliveryselection/views/templates/admin/selectedoptions.tpl');

@@ -14,6 +14,9 @@ $_MODULE['<{wishdeliveryselection}prestashop>wishhelperlist_7a14e04db0749425d7ef
 $_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_deb10517653c255364175796ace3553f'] = 'Produkt';
 $_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_3adbdb3ac060038aa0e6e6c138ef9873'] = 'Kategoria';
+$_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_f5ed618f3e82427f7ba31137d8be7d3d'] = 'Zarejestrowany email';
+$_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_d3a4ecfef6f3e1b66ea3e4da7b5c8730'] = 'Inny email';
+$_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_19841e28896816e787651aa605a7f5ff'] = 'Sms';
 $_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_1148092daaa9419013ae4be7dcf7367e'] = 'Dane zostały poprawnie zapisane';
 $_MODULE['<{wishdeliveryselection}prestashop>adminwishformcontroller_92a6225dd1baa42eb1d5dd7c504b643c'] = 'Nie ma nic do dodania';
 $_MODULE['<{wishdeliveryselection}prestashop>productwishselection_8ba7b8d2c0a2c9e820fcfd92e58eab18'] = 'Wybierz możliwą formę dostawy życzeń';
@@ -38,5 +41,5 @@ $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_58e6e36f05ba4c
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_ce5e22cbd1d14df317746fc4ce72a166'] = 'Data dostawy:';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_95faa3266149d524f48e226cd7656a92'] = 'Data dostawy musi być ustawiona przynajmniej na dzień jutrzejszy';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_a76483d7286ffbd53a010f1904231f80'] = 'Wyślij SMS';
-$_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_b1a206e9240368a4ccc5065e94ad9500'] = 'Numer telefonu:';
+$_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_c77e7ab98d4953b3f45a9ef0a39ab00d'] = 'Numer telefonu (+48)';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_eb78cbd108174fe8f540887ac35e3c4a'] = 'Niepoprawny numer telefonu';
