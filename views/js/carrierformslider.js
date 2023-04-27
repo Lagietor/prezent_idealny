@@ -27,14 +27,11 @@ function openFirstCheckedOption()
 {
     if ($('#registered_email:checked').length > 0) {
         $('#registered_email_form').slideDown('slow');
-
-        $('#registered_email_wishes').attr('required', 'required');
     }
     if ($('#other_email:checked').length > 0) {
         $('#other_email_form').slideDown('slow');
 
         $('#other_email_address').attr('required', 'required');
-        $('#other_email_wishes').attr('required', 'required');
     }
     if ($('#sms:checked').length > 0) {
         $('#sms_form').slideDown('slow');
@@ -49,9 +46,7 @@ function registeredEmailManageSettings()
     $('#other_email_form').slideUp('fast');
     $('#sms_form').slideUp('fast');
 
-    $('#registered_email_wishes').attr('required', 'required');
     $('#other_email_address').removeAttr('required');
-    $('#other_email_wishes').removeAttr('required');
     $('#sms_phone_number').removeAttr('required');
 }
 
@@ -62,8 +57,6 @@ function otherEmailManageSettings()
     $('#sms_form').slideUp('fast');
 
     $('#other_email_address').attr('required', 'required');
-    $('#other_email_wishes').attr('required', 'required');
-    $('#registered_email_wishes').removeAttr('required');
     $('#sms_phone_number').removeAttr('required');
 }
 
@@ -74,7 +67,5 @@ function smsManageSettings()
     $('#registered_email_form').slideUp('fast');
 
     $('#sms_phone_number').attr('required', 'required');
-    $('#registered_email_wishes').removeAttr('required');
     $('#other_email_address').removeAttr('required');
-    $('#other_email_wishes').removeAttr('required');
 }

@@ -53,8 +53,6 @@ $(document).ready(function() {
         }
     })
 
-    console.log(typeof ($('#other_email_datetime').val()));
-
     $('#other_email_datetime').focusout(function () {
         if (isDate($('#other_email_datetime').val())) {
             styleValidFocusOut('other_email_datetime');
@@ -161,6 +159,7 @@ function isDate(s)
 {
     currentDate = new Date();
     deliveryDate = new Date(s);
+    deliveryDate.setDate(deliveryDate.getDate() + 1);
 
     return (deliveryDate > currentDate);
 }

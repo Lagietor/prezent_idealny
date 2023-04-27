@@ -7,6 +7,8 @@ class WishValidate
         $currentDate = new DateTime("now");
         $date = new DateTime($date);
 
+        date_add($date, date_interval_create_from_date_string("1 day"));
+
         return ($date > $currentDate);
     }
 

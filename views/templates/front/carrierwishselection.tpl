@@ -15,7 +15,7 @@
                 {$customer.email}
             </label>
             <div id="registered_email_form" style="display: none">
-                <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
+                {l s='Wishes: ' mod='wishdeliveryselection'}
                 <br><br>
                 <textarea class="serp-watched-description form-control" id="registered_email_wishes" name="registered_email_wishes"
                 maxlength="400" placeholder="{l s='Happy Birthday!' mod='wishdeliveryselection'}" form="js-delivery">{$wish_message}</textarea>
@@ -50,10 +50,10 @@
                 {l s='Delivery date: ' mod='wishdeliveryselection'}
                 <br><br>
                 <input type="date" name="other_email_datetime" value="{$delivery_date}" id="other_email_datetime" class="input-group datepicker" form="js-delivery">
-                <span name="other_email_datetime_error_message" id="other_email_datetime_error_message" style="display: none">{l s='Delivery date must be set at least one day after today' mod='wishdeliveryselection'}</span>
+                <span name="other_email_datetime_error_message" id="other_email_datetime_error_message" style="display: none">{l s='Delivery date must be set at least today' mod='wishdeliveryselection'}</span>
                 <br><br>
 
-                <span style="color: red">*</span>{l s='Wishes: ' mod='wishdeliveryselection'}
+                {l s='Wishes: ' mod='wishdeliveryselection'}
                 <br><br>
                 <textarea class="serp-watched-description form-control" id="other_email_wishes" name="other_email_wishes"
                 maxlength="400" placeholder="{l s='Happy Birthday!' mod='wishdeliveryselection'}" form="js-delivery">{$wish_message}</textarea>

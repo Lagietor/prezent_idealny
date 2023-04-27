@@ -250,7 +250,7 @@ class Wishdeliveryselection extends Module
             }
 
             if (Configuration::get('DELIVERY_DATE') && !WishValidate::isDate(Configuration::get('DELIVERY_DATE'))) {
-                setcookie('wish_error', $this->l('Delivery date must be set at least one day after today'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
+                setcookie('wish_error', $this->l('Delivery date must be set at least today'), time() + 3600, "/", $_SERVER['SERVER_NAME']);
                 // Tools::redirect('index.php?controller=order&step=3');
                 Tools::redirect($_SERVER['HTTP_REFERER']);
             }

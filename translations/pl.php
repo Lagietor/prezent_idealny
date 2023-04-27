@@ -5,7 +5,7 @@ $_MODULE = array();
 $_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_f8814271e6449cadba8501a07ef0493b'] = 'Wybór dostawy życzeń';
 $_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_177dc49d3a097161f0e8bad80aef1f4c'] = 'Daje możliwość wyboru w jaki sposób życzenia zostaną dostarczone';
 $_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_58e6e36f05ba4c50d373303c9c73150d'] = 'Niepoprawny adres email';
-$_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_95faa3266149d524f48e226cd7656a92'] = 'Data dostawy musi być ustawiona przynajmniej na dzień jutrzejszy';
+$_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_da1d887f71dfa66c82a1cb9a13ef91b8'] = 'Data dostawy musi być ustawiona przynajmniej na dzień dzisiejszy';
 $_MODULE['<{wishdeliveryselection}prestashop>wishdeliveryselection_eb78cbd108174fe8f540887ac35e3c4a'] = 'Niepoprawny numer telefonu';
 $_MODULE['<{wishdeliveryselection}prestashop>wishhelperlist_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{wishdeliveryselection}prestashop>wishhelperlist_deb10517653c255364175796ace3553f'] = 'Produkt';
@@ -39,7 +39,7 @@ $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_972893912e20eb
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_a8a3104afa04ac28f81b616f171374aa'] = 'Inny email:';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_58e6e36f05ba4c50d373303c9c73150d'] = 'Niepoprawny adres email';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_ce5e22cbd1d14df317746fc4ce72a166'] = 'Data dostawy:';
-$_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_95faa3266149d524f48e226cd7656a92'] = 'Data dostawy musi być ustawiona przynajmniej na dzień jutrzejszy';
+$_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_da1d887f71dfa66c82a1cb9a13ef91b8'] = 'Data dostawy musi być ustawiona przynajmniej na dzień dzisiejszy';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_a76483d7286ffbd53a010f1904231f80'] = 'Wyślij SMS';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_c77e7ab98d4953b3f45a9ef0a39ab00d'] = 'Numer telefonu (+48)';
 $_MODULE['<{wishdeliveryselection}prestashop>carrierwishselection_eb78cbd108174fe8f540887ac35e3c4a'] = 'Niepoprawny numer telefonu';
