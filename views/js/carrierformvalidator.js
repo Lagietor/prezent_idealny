@@ -57,7 +57,7 @@ $(document).ready(function() {
         if (isDate($('#other_email_datetime').val())) {
             styleValidFocusOut('other_email_datetime');
             dateValid = 1;
-        } else {
+        } else if (!isDate($('#other_email_datetime').val()) && $('#other_email_datetime').val() !== '') {
             styleInvalidFocusOut('other_email_datetime');
             dateValid = 0;
         }
@@ -157,6 +157,9 @@ function isPhoneNumber(s)
 
 function isDate(s)
 {
+    console.log(s);
+
+    // return true;
     currentDate = new Date();
     deliveryDate = new Date(s);
     deliveryDate.setDate(deliveryDate.getDate() + 1);
